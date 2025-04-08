@@ -1,0 +1,19 @@
+name: Container Test
+
+on:
+  workflow_dispatch:
+
+jobs:
+  test-package-build:
+    runs-on: ubuntu-latest
+
+    container:
+      image: ubuntu:20.04
+      options: --privileged
+
+    steps:
+    - uses: actions/checkout@v4
+    
+    - uses: - uses: actions/setup-python@v5
+      with:
+        python-version: '3.13.2'
