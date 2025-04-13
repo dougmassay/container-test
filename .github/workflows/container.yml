@@ -12,8 +12,82 @@ jobs:
       options: --privileged
 
     steps:
-    - uses: actions/checkout@v4
-    
+    - name: Build Env
+      run: |
+        apt update
+        apt install -y software-properties-common
+        apt install -y \
+        build-essential \
+        curl \
+        desktop-file-utils \
+        g++-11 \
+        git \
+        libbrotli-dev \
+        libfontconfig1-dev \
+        libfreetype6-dev \
+        libgl1-mesa-dev \
+        libgtk-3-dev \
+        libicu-dev \
+        libssl-dev \
+        libwayland-dev \
+        libwayland-egl-backend-dev \
+        libx11-dev \
+        libx11-xcb-dev \
+        libxcb1-dev \
+        libxcb1-dev \
+        libxcb-cursor-dev \
+        libxcb-glx0-dev \
+        libxcb-icccm4-dev \
+        libxcb-image0-dev \
+        libxcb-keysyms1-dev \
+        libxcb-randr0-dev \
+        libxcb-render-util0-dev \
+        libxcb-shape0-dev \
+        libxcb-shm0-dev \
+        libxcb-sync-dev \
+        libxcb-util-dev \
+        libxcb-xfixes0-dev \
+        libxcb-xinerama0-dev \
+        libxcb-xkb-dev \
+        libxext-dev \
+        libxfixes-dev \
+        libxi-dev \
+        libxkbcommon-dev \
+        libxkbcommon-x11-dev \
+        libxrender-dev \
+        libzstd-dev \
+        pkg-config \
+        unzip \
+        zlib1g-dev \
+        zsync
+
+        update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-11 100
+        update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-11 100
+
+        apt autoremove --purge -y
+
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Cache Qt
+      id: cache-qt
+      uses: actions/cache@v4
+      with:
+        path: ${{runner.workspace}}/Qt
+        key: ${{ runner.os }}-sigilqt-${{ hashFiles('**/reset-lin-caches.txt') }}
+  
+    - name: Install Qt
+      uses: jurplel/install-qt-action@v3
+      with:
+        version: '6.8.2'
+        dir: ${{runner.workspace}}/Qt
+        modules: 'qtwebengine qtpositioning qtpdf qtwebchannel qtserialport'
+        setup-python: 'false'
+        cache: ${{ steps.cache-qt.outputs.cache-hit }}
+
+    - uses: lukka/get-cmake@latest
+         
     - uses: actions/setup-python@v5
       with:
         python-version: '3.13.2'
+
