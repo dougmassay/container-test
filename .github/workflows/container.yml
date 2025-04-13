@@ -15,7 +15,9 @@ jobs:
     - name: Build Env
       run: |
         apt update
-        apt install -y software-properties-common
+        apt install -y software-properties-common  apt-transport-https
+        apt-add-repository -yn ppa:savoury1/gcc-11
+
         apt install -y \
         build-essential \
         curl \
